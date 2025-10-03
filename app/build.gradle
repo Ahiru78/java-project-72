@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id 'application'
     id 'checkstyle'
@@ -19,16 +22,19 @@ repositories {
 }
 
 dependencies {
+    implementation("org.slf4j:slf4j-simple:2.0.17")
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     implementation("io.javalin:javalin:6.6.0")
-    implementation("io.javalin:javalin-bundle:6.6.0")
-    implementation("io.javalin:javalin-rendering:6.6.0")
-    implementation("org.slf4j:slf4j-simple:2.0.7")
-    implementation("com.zaxxer:HikariCP:6.3.0")
-    implementation("com.h2database:h2:2.2.220")
-    implementation("org.postgresql:postgresql:42.7.2")
+    implementation("io.javalin:javalin-bundle:6.7.0")
+    implementation("io.javalin:javalin-rendering:6.7.0")
+    implementation("org.slf4j:slf4j-simple:2.1.0-alpha1")
     implementation("gg.jte:jte:3.2.1")
+    implementation("com.zaxxer:HikariCP:6.3.0")
+    implementation("com.h2database:h2:2.3.232")
+    implementation("org.postgresql:postgresql:42.7.7")
     implementation group: 'org.webjars', name: 'bootstrap', version: '5.3.1'
 }
 
