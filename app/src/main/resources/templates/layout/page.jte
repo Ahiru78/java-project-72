@@ -43,6 +43,26 @@
     </nav>
 
     <main class="flex-grow-1">
+        @if(page != null && page.getFlash() != null && page.getFlashType() != null)
+            @if(page.getFlashType().equals("info"))
+                <div class="rounded-0 m-0 alert alert-dismissible fade show alert-info" role="alert">
+                    <p class="m-0">${page.getFlash()}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+            @elseif(page.getFlashType().equals("alert"))
+                <div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert">
+                    <p class="m-0">${page.getFlash()}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+            @elseif(page.getFlashType().equals("success"))
+                <div class="rounded-0 m-0 alert alert-dismissible fade show alert-success" role="alert">
+                    <p class="m-0">${page.getFlash()}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        @endif
         ${content}
     </main>
 

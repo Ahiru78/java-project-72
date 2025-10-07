@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Optional;
 import java.sql.SQLException;
 import hexlet.code.model.Url;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class UrlRepository extends BaseRepository{
 
     public static void save(Url url) throws SQLException {
-        var sql = "INSERT INTO Urls (name, created_at) VALUES (?, ?)";
+        var sql = "INSERT INTO urls (name, createdAt) VALUES (?, ?)";
 		try (Connection con = dataSource.getConnection();
              var stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
              stmt.setString(1, url.getName());
@@ -80,12 +82,13 @@ public class UrlRepository extends BaseRepository{
         }
     }
 
-    public static void delete(String name) throws SQLException {
-        String sql = "DELETE FROM urls";
+    public static void removeAll() throws SQLException {
+        String sql = "DELETE * FROM urls";
         try (Connection con = dataSource.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
-             stmt.setString(1, name);
-             var result = stmt.executeQuery();
+             stmt.executeUpdate();
+        } catch (SQLException e) {
+            log.info("Failed to clear the url repository", e);
         }
     }
 }

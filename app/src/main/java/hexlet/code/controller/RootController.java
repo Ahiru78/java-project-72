@@ -1,4 +1,5 @@
 package hexlet.code.controller;
+import hexlet.code.dto.BasePage;
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
@@ -13,13 +14,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
-
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 @Slf4j
 public class RootController {
     public static void build(Context ctx) {
-        ctx.render("posts/build.jte");
+        var page = new BasePage();
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
+        ctx.render("index.jte", model("page", page));
     }
 
     public static void create(Context ctx) throws URISyntaxException, MalformedURLException, SQLException{
@@ -28,11 +31,15 @@ public class RootController {
         try {
             toUrl = new URI(name).toURL();
         } catch (Exception e) {
-            ctx.redirect(NamedRoutes.urlsPath());
+            ctx.sessionAttribute("flash", "Некорректный URL");
+            ctx.sessionAttribute("flash-type", "alert");
+            ctx.redirect(NamedRoutes.mainPagePath());
             return;
         }
         if (name.isEmpty()) {
-            ctx.redirect(NamedRoutes.urlsPath());
+            ctx.sessionAttribute("flash", "Заполните поле ввода");
+            ctx.sessionAttribute("flash-type", "alert");
+            ctx.redirect(NamedRoutes.mainPagePath());
             return;
         }
         String protocol = toUrl.getProtocol();
@@ -42,9 +49,13 @@ public class RootController {
         if (UrlRepository.findByName(String.valueOf(url)).isEmpty()) {
             Url newUrl = new Url(String.valueOf(url));
             UrlRepository.save(newUrl);
+            ctx.sessionAttribute("flash", "Страница успешно добавлена");
+            ctx.sessionAttribute("flash-type", "success");
             log.info("Url saved");
         } else {
-            ctx.redirect(NamedRoutes.urlsPath());
+            ctx.sessionAttribute("flash", "Страница уже существует");
+            ctx.sessionAttribute("flash-type", "info");
+            ctx.redirect(NamedRoutes.mainPagePath());
             return;
         }
         ctx.redirect(NamedRoutes.urlsPath());
@@ -53,6 +64,8 @@ public class RootController {
     public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
         var page = new UrlsPage(urls);
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/index.jte", model("page", page));
     }
 

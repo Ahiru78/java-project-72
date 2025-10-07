@@ -60,7 +60,7 @@ public class App {
             config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
-        app.get(NamedRoutes.mainPagePath(), ctx -> ctx.render("index.jte"));
+        app.get(NamedRoutes.mainPagePath(), RootController::build);
         app.post(NamedRoutes.urlsPath(), RootController::create);
         app.get(NamedRoutes.urlsPath(), RootController::index);
         app.get(NamedRoutes.urlPath("{id}"), RootController::show);
