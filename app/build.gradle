@@ -51,12 +51,15 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
 }
 tasks.jacocoTestReport { reports { xml.required.set(true) } }
-
+ 
 sonar {
     properties {
         property "sonar.projectKey", "Ahiru78_java-project-72"
         property "sonar.organization", "ahiru78"
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.dependencyVerification.enabled", "false")
     }
 }
