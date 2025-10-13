@@ -54,7 +54,7 @@ test {
 
 }
 tasks.jacocoTestReport { reports { xml.required.set(true) } }
- 
+
 sonar {
     properties {
         property "sonar.projectKey", "Ahiru78_java-project-72"
