@@ -6,6 +6,8 @@ test:
 	./gradlew test
 lint:
 	./gradlew checkstyleMain
+tint:
+	./gradlew checkstyleTest
 build:
 	./gradlew build
 	./gradlew checkstyleMain

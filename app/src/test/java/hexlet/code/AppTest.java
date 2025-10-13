@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import static hexlet.code.util.NamedRoutes.urlsPath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
@@ -139,7 +138,7 @@ public class AppTest {
             UrlRepository.save(url1);
             UrlRepository.save(url2);
             UrlRepository.removeAll();
-            List <Url> urlsList = UrlRepository.getEntities();
+            List<Url> urlsList = UrlRepository.getEntities();
             assertThat(urlsList.isEmpty());
         });
     }
