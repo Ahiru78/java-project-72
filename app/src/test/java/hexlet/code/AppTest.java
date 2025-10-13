@@ -1,17 +1,23 @@
 package hexlet.code;
 
+import static hexlet.code.util.NamedRoutes.urlsPath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
 
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
+import hexlet.code.util.NamedRoutes;
 
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
+import okhttp3.Response;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.MockResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,14 +63,31 @@ public class AppTest {
     }
 
     @Test
-    public void testCreateUrl() {
+    public void testPostUrl() {
         JavalinTest.test(app, (server, client) -> {
-            var testUrl = new Url("test");
-            UrlRepository.save(testUrl);
-            var response = client.get("/urls/" + testUrl.getId());
-            assertThat(response.code()).isEqualTo(200);
-            assert response.body() != null;
-            assertThat(response.body().string()).contains("test");
+            Response response = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
+            Optional<Url> url = UrlRepository.findByName("https://reddit.com");
+            var urlId = url.get().getId().toString();
+            var getResponse = client.get(NamedRoutes.urlPath(urlId));
+            assertThat(getResponse.code()).isEqualTo(200);
+            assertThat(getResponse.body().string()).contains("https://reddit.com");
+        });
+    }
+
+    @Test
+    public void testPostUrlCheck() {
+        JavalinTest.test(app, (server, client) -> {
+            Response response = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
+            Optional<Url> url = UrlRepository.findByName("https://reddit.com");
+            Long urlId = url.get().getId();
+            Response responseCheck = client.post(NamedRoutes.urlChecksPath(urlId));
+            var getResponse = client.get(NamedRoutes.urlPath(urlId));
+            assertThat(getResponse.code()).isEqualTo(200);
+            var checks = UrlCheckRepository.findById(urlId);
+            for (UrlCheck check : checks) {
+                assertThat(check.getTitle().contains("Reddit - The heart of the internet"));
+                assertThat(check.getH1().contains("Reddit is where millions of people gather"));
+            }
         });
     }
 
@@ -73,6 +96,51 @@ public class AppTest {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/url/999999");
             assertThat(response.code()).isEqualTo(404);
+        });
+    }
+
+    @Test
+    void testUrlRepoSave() throws Exception {
+        JavalinTest.test(app, (server, client) -> {
+            Url url = new Url("https://ya.ru");
+            UrlRepository.save(url);
+            var urlTittle = UrlRepository.findByName("https://ya.ru").get().getName();
+            assertThat(urlTittle).isEqualTo("https://ya.ru");
+        });
+    }
+
+    @Test
+    void testUrlRepoFindById() throws Exception {
+        JavalinTest.test(app, (server, client) -> {
+            Url url = new Url("https://ya.ru");
+            UrlRepository.save(url);
+            var urlId = UrlRepository.findByName("https://ya.ru").get().getId();
+            var urlTittle = UrlRepository.findById(urlId).get().getName();
+            assertThat(urlTittle).isEqualTo("https://ya.ru");
+        });
+    }
+    @Test
+    void testUrlRepoGetEntities() throws Exception {
+        JavalinTest.test(app, (server, client) -> {
+            Url url1 = new Url("https://ya.ru");
+            Url url2 = new Url("https://www.reddit.com/");
+            UrlRepository.save(url1);
+            UrlRepository.save(url2);
+            var urlsList = UrlRepository.getEntities();
+            assertThat(!urlsList.isEmpty());
+        });
+    }
+
+    @Test
+    void testUrlRepoRemoveAll() throws Exception {
+        JavalinTest.test(app, (server, client) -> {
+            Url url1 = new Url("https://ya.ru");
+            Url url2 = new Url("https://www.reddit.com/");
+            UrlRepository.save(url1);
+            UrlRepository.save(url2);
+            UrlRepository.removeAll();
+            List <Url> urlsList = UrlRepository.getEntities();
+            assertThat(urlsList.isEmpty());
         });
     }
 }
