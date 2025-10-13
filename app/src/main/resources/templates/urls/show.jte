@@ -1,6 +1,6 @@
 @import hexlet.code.util.NamedRoutes
 @import hexlet.code.dto.urls.UrlPage
-@import hexlet.code.model.Url
+@import hexlet.code.model.UrlCheck
 @param UrlPage page
 
 @template.layout.page(
@@ -11,19 +11,19 @@ content = @`
         <table class="table table-bordered table-hover mt-3">
             <tbody>
             <tr>
-                <th>ID</th>
-                <th>${page.getUrl().getId()}</th>
+                <td>ID</td>
+                <td>${page.getUrl().getId()}</td>
             </tr>
             <tr>
-                <th>Имя</th>
-                <th>${page.getUrl().getName()}</th>
+                <td>Имя</td>
+                <td>${page.getUrl().getName()}</td>
             </tr>
             <tr>
-                <th>Дата создания</th>
-                <th>${String.valueOf(page.getUrl().getCreatedAt())}</th>
+                <td>Дата создания</td>
+                <td>${page.getUrl().getFormatTime()}</td>
             </tr>
             </tbody>
-            </table>
+        </table>
 
         <h2 class="mt-5">Проверки</h2>
         <form method="post" action="/urls/${page.getUrl().getId()}/checks">
@@ -39,9 +39,18 @@ content = @`
                     <th class="col-2">Дата проверки</th>
                     </thead>
                     <tbody>
-
+                    @for(UrlCheck check : page.getChecksList())
+                        <tr>
+                            <td> ${check.getId()} </td>
+                            <td> ${check.getStatusCode()} </td>
+                            <td> ${check.getTitle()}  </td>
+                            <td> ${check.getH1()} </td>
+                            <td> ${check.getDescription()} </td>
+                            <td> ${check.getFormatTime()} </td>
+                        </tr>
+                    @endfor
                     </tbody>
                 </table>
-            </div>
+    </div>
 `
 )

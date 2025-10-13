@@ -1,11 +1,11 @@
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
+ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     id 'application'
     id 'checkstyle'
     id 'jacoco'
-    id "org.sonarqube" version "6.2.0.5505"
+    id "org.sonarqube" version "6.3.1.5724"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.freefair.lombok") version "8.13.1"
 }
@@ -37,6 +37,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.7")
     implementation group: 'org.webjars', name: 'bootstrap', version: '5.3.1'
     implementation("com.mashape.unirest:unirest-java:1.4.9")
+    implementation 'org.jsoup:jsoup:1.21.2'
 
     testImplementation("org.assertj:assertj-core:3.27.3")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -45,6 +46,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.mockito:mockito-core:4.2.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 }
 
 test {
@@ -54,7 +56,7 @@ tasks.jacocoTestReport { reports { xml.required.set(true) } }
 
 sonar {
     properties {
-        property "sonar.projectKey", "Ahiru78_java-project-78"
+        property "sonar.projectKey", "Ahiru78_java-project-72"
         property "sonar.organization", "ahiru78"
     }
 }

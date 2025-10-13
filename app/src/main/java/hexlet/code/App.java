@@ -1,16 +1,14 @@
 package hexlet.code;
 import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlCheckController;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
-import static io.javalin.rendering.template.TemplateUtil.model;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import hexlet.code.repository.BaseRepository;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
-import io.javalin.rendering.template.JavalinJte;
 import gg.jte.resolve.ResourceCodeResolver;
-import io.javalin.http.Context;
 import hexlet.code.util.NamedRoutes;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +19,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import java.sql.Statement;
 import java.sql.Connection;
+
 
 @Slf4j
 public class App {
@@ -64,11 +63,12 @@ public class App {
         app.post(NamedRoutes.urlsPath(), RootController::create);
         app.get(NamedRoutes.urlsPath(), RootController::index);
         app.get(NamedRoutes.urlPath("{id}"), RootController::show);
+        app.post(NamedRoutes.urlChecksPath("{id}"), UrlCheckController::check);
         return app;
     }
 
     private static int getPort() {
-        String port = System.getenv().getOrDefault("PORT", "49152");
+        String port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.valueOf(port);
     }
 

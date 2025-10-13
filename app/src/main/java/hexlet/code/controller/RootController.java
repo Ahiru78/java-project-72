@@ -1,10 +1,12 @@
 package hexlet.code.controller;
 import hexlet.code.dto.BasePage;
 import hexlet.code.dto.urls.UrlPage;
+import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.dto.urls.UrlsPage;
 import io.javalin.http.NotFoundResponse;
 import java.net.URI;
@@ -14,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.URIBuilder;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
+import java.util.List;
+
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 @Slf4j
@@ -25,7 +29,7 @@ public class RootController {
         ctx.render("index.jte", model("page", page));
     }
 
-    public static void create(Context ctx) throws URISyntaxException, MalformedURLException, SQLException{
+    public static void create(Context ctx) throws URISyntaxException, MalformedURLException, SQLException {
         String name = ctx.formParamAsClass("url", String.class).get();
         URL toUrl;
         try {
@@ -63,6 +67,11 @@ public class RootController {
 
     public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
+        for (Url url : urls) {
+            if (!UrlCheckRepository.findById(url.getId()).isEmpty()) {
+                url.setLastCheck(UrlCheckRepository.findLatest(url.getId()));
+            }
+        }
         var page = new UrlsPage(urls);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
         page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
@@ -73,7 +82,10 @@ public class RootController {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var url = UrlRepository.findById(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
-        var page = new UrlPage(url);
+        List<UrlCheck> list = UrlCheckRepository.findById(id);
+        var page = new UrlPage(url, list);
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("urls/show.jte", model("page", page));
     }
 }

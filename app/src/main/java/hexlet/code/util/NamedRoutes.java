@@ -13,11 +13,19 @@ public class NamedRoutes {
         return PATH_SITES_PAGE;
     }
 
+    public static String urlPath(String id) {
+        return PATH_SITES_PAGE + "/" + id;
+    }
+
     public static String urlPath(Long id) {
         return urlPath(String.valueOf(id));
     }
 
-    public static String urlPath(String id) {
-        return PATH_SITES_PAGE + "/" + id;
+    public static String urlChecksPath(String id) {
+        return PATH_SITES_PAGE + "/" + id + "/checks";
+    }
+
+    public static String urlChecksPath(Long id) {
+        return urlChecksPath(String.valueOf(id));
     }
 }
