@@ -142,4 +142,24 @@ public class AppTest {
             assertThat(urlsList.isEmpty());
         });
     }
+
+    @Test
+    void testUrlCheckRepoSave() throws Exception {
+        JavalinTest.test(app, (server, client) -> {
+            Url url = new Url("https://ya.ru");
+            UrlCheck urlCheck = new UrlCheck(200,
+                    "https://ya.ru",
+                    "Найдётся все",
+                    "",
+                    url.getId());
+            UrlRepository.save(url);
+            UrlCheckRepository.save(urlCheck);
+            var checks = UrlCheckRepository.findById(url.getId());
+            for (UrlCheck check : checks) {
+                assertThat(check.getTitle()).isEqualTo("https://ya.ru");
+                assertThat(check.getDescription()).isEqualTo("Найдётся все");
+                assertThat(check.getUrlId()).isEqualTo(url.getId());
+            }
+        });
+    }
 }
