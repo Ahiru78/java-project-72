@@ -44,11 +44,6 @@ public class UrlCheckController {
             if (descriptionSel != null) {
                 description = descriptionSel.attr("content");
             }
-
-            System.out.println(statusCode);
-            System.out.println(title);
-            System.out.println(h1);
-            System.out.println(description);
             var newCheck = new UrlCheck(
                     statusCode,
                     title,
