@@ -16,6 +16,7 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
 
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.MockResponse;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+@Slf4j
 public class AppTest {
 
     private Javalin app;
@@ -95,6 +97,25 @@ public class AppTest {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/url/999999");
             assertThat(response.code()).isEqualTo(404);
+        });
+    }
+
+    @Test
+    void testUrlAlreadyExists() throws Exception {
+        JavalinTest.test(app, (server, client) -> {
+            Response response = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
+            Response response1 = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
+            var urlList = UrlRepository.getEntities();
+            assertThat(urlList).hasSize(1);
+        });
+    }
+
+    @Test
+    void testUrlInvalid() throws Exception {
+        JavalinTest.test(app, (server, client) -> {
+            Response response1 = client.post(NamedRoutes.urlsPath(), "url=htddit.com");
+            var urlList = UrlRepository.getEntities();
+            assertThat(urlList).isEmpty();
         });
     }
 
