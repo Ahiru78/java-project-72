@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UrlRepository extends BaseRepository {
 
-    public static void save(Url url) throws SQLException {
+    public static void save(Url url) {
         var sql = "INSERT INTO urls (name, createdAt) VALUES (?, ?)";
         try (Connection con = dataSource.getConnection();
              var stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -29,11 +29,11 @@ public class UrlRepository extends BaseRepository {
                 throw new SQLException("DB have not returned an id after saving an entity");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("Failed to save entity in the url repository", e);
         }
     }
 
-    public static Optional<Url> findById(Long id) throws SQLException {
+    public static Optional<Url> findById(Long id) {
         String sql = "SELECT * FROM urls WHERE id = ?";
         try (Connection con = dataSource.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -46,10 +46,13 @@ public class UrlRepository extends BaseRepository {
                 return Optional.of(url);
             }
             return Optional.empty();
+        } catch (SQLException e) {
+            log.info("Failed to find entity by id in the url repository", e);
+            return Optional.empty();
         }
     }
 
-    public static Optional<Url> findByName(String name) throws SQLException {
+    public static Optional<Url> findByName(String name) {
         String sql = "SELECT * FROM urls WHERE name = ?";
         try (Connection con = dataSource.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -62,23 +65,28 @@ public class UrlRepository extends BaseRepository {
                 return Optional.of(url);
             }
             return Optional.empty();
+        } catch (SQLException e) {
+            log.info("Failed to find entity by name in the url repository", e);
+            return Optional.empty();
         }
     }
 
-    public static List<Url> getEntities() throws SQLException {
+    public static List<Url> getEntities() {
+        List<Url> urlList = new ArrayList<>();
         String sql = "SELECT * FROM urls";
         try (Connection con = dataSource.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             var result = stmt.executeQuery();
-            List<Url> urlList = new ArrayList<>();
             while (result.next()) {
                 var url = new Url(result.getString("name"));
                 url.setId(result.getLong("id"));
                 url.setCreatedAt(result.getTimestamp("createdAt").toLocalDateTime());
                 urlList.add(url);
             }
-            return urlList;
+        } catch (SQLException e) {
+            log.info("Failed to get entities in the url repository", e);
         }
+        return urlList;
     }
 
     public static void removeAll() throws SQLException {

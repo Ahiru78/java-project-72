@@ -69,7 +69,6 @@
     <footer class="footer">
         <div class="container">
             <div class="text-center text-muted">
-                created by
                 <a></a>
             </div>
         </div>

@@ -3,6 +3,8 @@
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Ahiru78_java-project-72&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Ahiru78_java-project-72)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Ahiru78_java-project-72&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Ahiru78_java-project-72)
 
+## [Page Analyzer](https://java-project-72-1-rvhc.onrender.com/)
+
 ## Описание проекта
 
 * **Page Analyzer** – сайт, который анализирует указанные страницы на SEO пригодность.

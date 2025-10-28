@@ -34,7 +34,7 @@ public class UrlCheckRepository extends BaseRepository {
                 throw new SQLException("DB have not returned an id after saving an entity");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("Failed to save entity in the url_checks repository", e);
         }
     }
 
