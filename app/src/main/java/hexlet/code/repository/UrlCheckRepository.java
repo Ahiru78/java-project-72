@@ -11,6 +11,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
@@ -38,7 +41,7 @@ public class UrlCheckRepository extends BaseRepository {
         }
     }
 
-    public static List<UrlCheck> findById(Long urlID) throws SQLException {
+    public static List<UrlCheck> findById(Long urlID) {
         String sql = "SELECT * FROM url_checks WHERE urlID = ? ORDER BY createdAt DESC";
         List<UrlCheck> checksList = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
@@ -62,30 +65,32 @@ public class UrlCheckRepository extends BaseRepository {
         return  checksList;
     }
 
-    public static UrlCheck findLatest(Long urlID) throws SQLException {
-        String sql = "SELECT * FROM url_checks WHERE urlID = ? ORDER BY createdAt DESC LIMIT 1;";
+    public static Optional<Map<Long, UrlCheck>> findLatest() throws SQLException {
+        var sql = "SELECT DISTINCT ON (urlId) * from url_checks order by urlId DESC, id DESC";
         UrlCheck urlCheck = null;
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setLong(1, urlID);
-            var result = stmt.executeQuery();
-            while (result.next()) {
-                urlCheck = new UrlCheck(
-                        result.getInt("statusCode"),
-                        result.getString("title"),
-                        result.getString("H1"),
-                        result.getString("Description"),
-                        result.getLong("urlId"));
-                urlCheck.setId(result.getLong("id"));
-                urlCheck.setCreatedAt(result.getTimestamp("createdAt").toLocalDateTime());
+
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql)) {
+            var resultSet = stmt.executeQuery();
+            var result = new HashMap<Long, UrlCheck>();
+            while (resultSet.next()) {
+                var id = resultSet.getLong("id");
+                var urlId = resultSet.getLong("urlId");
+                var statusCode = resultSet.getInt("statusCode");
+                var title = resultSet.getString("title");
+                var h1 = resultSet.getString("h1");
+                var description = resultSet.getString("description");
+                var createdAt = resultSet.getTimestamp("createdAt");
+                var check = new UrlCheck(statusCode, title, h1, description, urlId);
+                check.setId(id);
+                check.setCreatedAt(resultSet.getTimestamp("createdAt").toLocalDateTime());
+                result.put(urlId, check);
             }
-        } catch (SQLException e) {
-            log.info("Failed to find entity in the url_checks repository", e);
+            return Optional.ofNullable(result);
         }
-        return  urlCheck;
     }
 
-    public static void removeAll() throws SQLException {
+    public static void removeAll() {
         String sql = "DELETE * FROM url_checks";
         try (Connection con = dataSource.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {

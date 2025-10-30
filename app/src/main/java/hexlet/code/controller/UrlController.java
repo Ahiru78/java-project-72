@@ -17,11 +17,13 @@ import org.apache.http.client.utils.URIBuilder;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 @Slf4j
-public class RootController {
+public class UrlController {
     public static void build(Context ctx) {
         var page = new BasePage();
         page.setFlash(ctx.consumeSessionAttribute("flash"));
@@ -67,9 +69,10 @@ public class RootController {
 
     public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
+        Optional<Map<Long, UrlCheck>> urlChecks = UrlCheckRepository.findLatest();
         for (Url url : urls) {
-            if (!UrlCheckRepository.findById(url.getId()).isEmpty()) {
-                url.setLastCheck(UrlCheckRepository.findLatest(url.getId()));
+            if (urlChecks.isPresent() & urlChecks.get().containsKey(url.getId())) {
+                url.setLastCheck(urlChecks.get().get(url.getId()));
             }
         }
         var page = new UrlsPage(urls);

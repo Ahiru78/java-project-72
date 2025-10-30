@@ -1,5 +1,5 @@
 package hexlet.code;
-import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlController;
 import hexlet.code.controller.UrlCheckController;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
@@ -59,10 +59,10 @@ public class App {
             config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
-        app.get(NamedRoutes.mainPagePath(), RootController::build);
-        app.post(NamedRoutes.urlsPath(), RootController::create);
-        app.get(NamedRoutes.urlsPath(), RootController::index);
-        app.get(NamedRoutes.urlPath("{id}"), RootController::show);
+        app.get(NamedRoutes.mainPagePath(), UrlController::build);
+        app.post(NamedRoutes.urlsPath(), UrlController::create);
+        app.get(NamedRoutes.urlsPath(), UrlController::index);
+        app.get(NamedRoutes.urlPath("{id}"), UrlController::show);
         app.post(NamedRoutes.urlChecksPath("{id}"), UrlCheckController::check);
         return app;
     }

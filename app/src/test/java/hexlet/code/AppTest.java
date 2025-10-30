@@ -88,6 +88,7 @@ public class AppTest {
             for (UrlCheck check : checks) {
                 assertThat(check.getTitle().contains("Reddit - The heart of the internet"));
                 assertThat(check.getH1().contains("Reddit is where millions of people gather"));
+                assertThat(check.getDescription().isEmpty());
             }
         });
     }
