@@ -68,7 +68,6 @@ public class UrlCheckRepository extends BaseRepository {
     public static Optional<Map<Long, UrlCheck>> findLatest() throws SQLException {
         var sql = "SELECT DISTINCT ON (urlId) * from url_checks order by urlId DESC, id DESC";
         UrlCheck urlCheck = null;
-
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             var resultSet = stmt.executeQuery();
@@ -80,7 +79,6 @@ public class UrlCheckRepository extends BaseRepository {
                 var title = resultSet.getString("title");
                 var h1 = resultSet.getString("h1");
                 var description = resultSet.getString("description");
-                var createdAt = resultSet.getTimestamp("createdAt");
                 var check = new UrlCheck(statusCode, title, h1, description, urlId);
                 check.setId(id);
                 check.setCreatedAt(resultSet.getTimestamp("createdAt").toLocalDateTime());
