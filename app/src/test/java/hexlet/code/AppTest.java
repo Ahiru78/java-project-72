@@ -3,6 +3,9 @@ package hexlet.code;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -30,15 +33,25 @@ public class AppTest {
     private Javalin app;
     private static MockWebServer mockWebServer;
 
+    private static Path getFixturePath(String fileName) {
+        return Paths.get("src/test/resources/fixtures", fileName)
+                .toAbsolutePath().normalize();
+    }
+
+    private static String readFixture(String fileName) throws IOException {
+        Path filePath = getFixturePath(fileName);
+        return Files.readString(filePath).trim();
+    }
+
     @BeforeEach
     public final void setUp() throws IOException, SQLException {
         app = App.getApp();
         UrlRepository.removeAll();
         UrlCheckRepository.removeAll();
         mockWebServer = new MockWebServer();
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(404)
-                .setBody("Not Found"));
+        MockResponse mockedResponse = new MockResponse()
+                .setBody(readFixture("index.html"));
+        mockWebServer.enqueue(mockedResponse);
         mockWebServer.start();
     }
 
