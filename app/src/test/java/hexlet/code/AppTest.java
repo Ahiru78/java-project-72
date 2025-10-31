@@ -56,7 +56,7 @@ public class AppTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    final public void tearDown() throws Exception {
         mockWebServer.shutdown();
     }
 
