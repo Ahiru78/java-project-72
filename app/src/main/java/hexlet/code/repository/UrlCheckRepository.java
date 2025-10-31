@@ -19,7 +19,7 @@ import java.util.Optional;
 public class UrlCheckRepository extends BaseRepository {
 
     public static void save(UrlCheck urlCheck) throws SQLException {
-        var sql = "INSERT INTO url_checks (statusCode, title, h1, description, urlId, createdAt) VALUES "
+        var sql = "INSERT INTO url_checks (status_code, title, h1, description, url_id, created_at) VALUES "
                 + "(?, ?, ?, ?, ?, ?)";
         try (Connection con = dataSource.getConnection();
              var stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -42,7 +42,7 @@ public class UrlCheckRepository extends BaseRepository {
     }
 
     public static List<UrlCheck> findById(Long urlID) {
-        String sql = "SELECT * FROM url_checks WHERE urlID = ? ORDER BY createdAt DESC";
+        String sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC";
         List<UrlCheck> checksList = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -50,13 +50,13 @@ public class UrlCheckRepository extends BaseRepository {
             var result = stmt.executeQuery();
             while (result.next()) {
                 var urlCheck = new UrlCheck(
-                        result.getInt("statusCode"),
+                        result.getInt("status_code"),
                         result.getString("title"),
                         result.getString("H1"),
                         result.getString("Description"),
-                        result.getLong("urlId"));
+                        result.getLong("url_id"));
                 urlCheck.setId(result.getLong("id"));
-                urlCheck.setCreatedAt(result.getTimestamp("createdAt").toLocalDateTime());
+                urlCheck.setCreatedAt(result.getTimestamp("created_at").toLocalDateTime());
                 checksList.add(urlCheck);
             }
         } catch (SQLException e) {
@@ -66,7 +66,7 @@ public class UrlCheckRepository extends BaseRepository {
     }
 
     public static Optional<Map<Long, UrlCheck>> findLatest() throws SQLException {
-        var sql = "SELECT DISTINCT ON (urlId) * from url_checks order by urlId DESC, id DESC";
+        var sql = "SELECT DISTINCT ON (url_id) * from url_checks order by url_id DESC, id DESC";
         UrlCheck urlCheck = null;
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
@@ -74,14 +74,14 @@ public class UrlCheckRepository extends BaseRepository {
             var result = new HashMap<Long, UrlCheck>();
             while (resultSet.next()) {
                 var id = resultSet.getLong("id");
-                var urlId = resultSet.getLong("urlId");
-                var statusCode = resultSet.getInt("statusCode");
+                var urlId = resultSet.getLong("url_id");
+                var statusCode = resultSet.getInt("status_code");
                 var title = resultSet.getString("title");
                 var h1 = resultSet.getString("h1");
                 var description = resultSet.getString("description");
                 var check = new UrlCheck(statusCode, title, h1, description, urlId);
                 check.setId(id);
-                check.setCreatedAt(resultSet.getTimestamp("createdAt").toLocalDateTime());
+                check.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                 result.put(urlId, check);
             }
             return Optional.ofNullable(result);

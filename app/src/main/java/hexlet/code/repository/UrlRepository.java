@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UrlRepository extends BaseRepository {
 
     public static void save(Url url) {
-        var sql = "INSERT INTO urls (name, createdAt) VALUES (?, ?)";
+        var sql = "INSERT INTO urls (name, created_at) VALUES (?, ?)";
         try (Connection con = dataSource.getConnection();
              var stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, url.getName());
@@ -42,7 +42,7 @@ public class UrlRepository extends BaseRepository {
             if (result.next()) {
                 var url = new Url(result.getString("name"));
                 url.setId(result.getLong("id"));
-                url.setCreatedAt(result.getTimestamp("createdAt").toLocalDateTime());
+                url.setCreatedAt(result.getTimestamp("created_at").toLocalDateTime());
                 return Optional.of(url);
             }
             return Optional.empty();
@@ -61,7 +61,7 @@ public class UrlRepository extends BaseRepository {
             if (result.next()) {
                 var url = new Url(result.getString("name"));
                 url.setId(result.getLong("id"));
-                url.setCreatedAt(result.getTimestamp("createdAt").toLocalDateTime());
+                url.setCreatedAt(result.getTimestamp("created_at").toLocalDateTime());
                 return Optional.of(url);
             }
             return Optional.empty();
@@ -80,7 +80,7 @@ public class UrlRepository extends BaseRepository {
             while (result.next()) {
                 var url = new Url(result.getString("name"));
                 url.setId(result.getLong("id"));
-                url.setCreatedAt(result.getTimestamp("createdAt").toLocalDateTime());
+                url.setCreatedAt(result.getTimestamp("created_at").toLocalDateTime());
                 urlList.add(url);
             }
         } catch (SQLException e) {
