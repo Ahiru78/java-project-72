@@ -77,7 +77,7 @@ public class AppTest {
     }
 
     @Test
-    public void testPostUrl() {
+    public void testPostMockUrl() {
         JavalinTest.test(app, (server, client) -> {
             var urlMock = mockWebServer.url("/").toString();
             Response response = client.post(NamedRoutes.urlsPath(), "url=http://localhost:56678");
@@ -90,9 +90,8 @@ public class AppTest {
     }
 
     @Test
-    public void testPostUrlCheck() {
+    public void testPostMockUrlCheck() {
         JavalinTest.test(app, (server, client) -> {
-            //Response response = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
             Response response = client.post(NamedRoutes.urlsPath(), "url=http://localhost:56678");
             Optional<Url> url = UrlRepository.findByName("http://localhost:56678");
             Long urlId = url.get().getId();
@@ -196,6 +195,37 @@ public class AppTest {
                 assertThat(check.getTitle()).isEqualTo("https://ya.ru");
                 assertThat(check.getDescription()).isEqualTo("Найдётся все");
                 assertThat(check.getUrlId()).isEqualTo(url.getId());
+            }
+        });
+    }
+
+    // For SonarQube coverage purposes
+    @Test
+    public void testPostUrl() {
+        JavalinTest.test(app, (server, client) -> {
+            Response response = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
+            Optional<Url> url = UrlRepository.findByName("https://reddit.com");
+            var urlId = url.get().getId().toString();
+            var getResponse = client.get(NamedRoutes.urlPath(urlId));
+            assertThat(getResponse.code()).isEqualTo(200);
+            assertThat(getResponse.body().string()).contains("https://reddit.com");
+        });
+    }
+
+    @Test
+    public void testPostUrlCheck() {
+        JavalinTest.test(app, (server, client) -> {
+            Response response = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
+            Optional<Url> url = UrlRepository.findByName("https://reddit.com");
+            Long urlId = url.get().getId();
+            Response responseCheck = client.post(NamedRoutes.urlChecksPath(urlId));
+            var getResponse = client.get(NamedRoutes.urlPath(urlId));
+            assertThat(getResponse.code()).isEqualTo(200);
+            var checks = UrlCheckRepository.findById(urlId);
+            for (UrlCheck check : checks) {
+                assertThat(check.getTitle().contains("Reddit - The heart of the internet"));
+                assertThat(check.getH1().contains("Reddit is where millions of people gather"));
+                assertThat(check.getDescription().isEmpty());
             }
         });
     }
