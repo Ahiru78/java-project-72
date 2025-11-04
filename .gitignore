@@ -46,3 +46,6 @@ bin/
 
 ### WSL ###
 *.Identifier
+
+### JTE ###
+jte-classes/gg/jte/generated/ondemand
