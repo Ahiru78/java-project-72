@@ -105,7 +105,7 @@ public class AppTest {
             }
         });
     }
-    
+
     @Test
     public void testPostUrl() {
         JavalinTest.test(app, (server, client) -> {
