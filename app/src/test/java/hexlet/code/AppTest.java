@@ -105,8 +105,7 @@ public class AppTest {
             }
         });
     }
-
-    // For SonarQube coverage purposes
+    
     @Test
     public void testPostUrl() {
         JavalinTest.test(app, (server, client) -> {
@@ -119,7 +118,6 @@ public class AppTest {
         });
     }
 
-    // For SonarQube coverage purposes
     @Test
     public void testPostUrlCheck() {
         JavalinTest.test(app, (server, client) -> {
