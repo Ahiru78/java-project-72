@@ -157,7 +157,7 @@ public class AppTest {
     @Test
     void testUrlInvalid() throws Exception {
         JavalinTest.test(app, (server, client) -> {
-            Response response1 = client.post(NamedRoutes.urlsPath(), "url=htddit.com");
+            Response response1 = client.post(NamedRoutes.urlsPath(), "url=tddit.com");
             var urlList = UrlRepository.getEntities();
             assertThat(urlList).isEmpty();
         });
