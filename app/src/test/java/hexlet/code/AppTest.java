@@ -46,6 +46,8 @@ public class AppTest {
     @BeforeEach
     public final void setUp() throws IOException, SQLException {
         app = App.getApp();
+        UrlRepository.removeAll();
+        UrlCheckRepository.removeAll();
         mockWebServer = new MockWebServer();
         MockResponse mockedResponse = new MockResponse()
                 .setBody(readFixture("index.html"));
@@ -55,8 +57,6 @@ public class AppTest {
 
     @AfterEach
     public final void tearDown() throws Exception {
-        UrlRepository.removeAll();
-        UrlCheckRepository.removeAll();
         mockWebServer.shutdown();
     }
 
@@ -200,8 +200,8 @@ public class AppTest {
     @Test
     void testUrlRepoRemoveAll() throws Exception {
         JavalinTest.test(app, (server, client) -> {
-            Url url1 = new Url("https://ya.ru");
-            Url url2 = new Url("https://www.reddit.com/");
+            Url url1 = new Url("https://hhhhhh.ru");
+            Url url2 = new Url("https://www.aaaaaaa.com/");
             UrlRepository.save(url1);
             UrlRepository.save(url2);
             UrlRepository.removeAll();
