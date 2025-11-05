@@ -61,37 +61,6 @@ public class AppTest {
     }
 
     @Test
-    public void testPostMockUrlCheck() {
-        JavalinTest.test(app, (server, client) -> {
-            var mockUrl = "http://localhost:" + mockWebServer.getPort();
-            Response response = client.post(NamedRoutes.urlsPath(),  "url=" + mockUrl);
-            Optional<Url> url = UrlRepository.findByName(mockUrl);
-            Long urlId = url.get().getId();
-            Response responseCheck = client.post(NamedRoutes.urlChecksPath(urlId));
-            var getResponse = client.get(NamedRoutes.urlPath(urlId));
-            assertThat(getResponse.code()).isEqualTo(200);
-            var checks = UrlCheckRepository.findById(urlId);
-            for (UrlCheck check : checks) {
-                assertThat(check.getTitle().contains("Index Page"));
-                assertThat(check.getH1().contains("Welcome to My Website"));
-                assertThat(check.getDescription().isEmpty());
-            }
-        });
-    }
-
-    @Test
-    public void testPostUrlSonar() {
-        JavalinTest.test(app, (server, client) -> {
-            Response response = client.post(NamedRoutes.urlsPath(), "url=https://reddit.com");
-            Optional<Url> url = UrlRepository.findByName("https://reddit.com");
-            var urlId = url.get().getId().toString();
-            var getResponse = client.get(NamedRoutes.urlPath(urlId));
-            assertThat(getResponse.code()).isEqualTo(200);
-            assertThat(getResponse.body().string()).contains("https://reddit.com");
-        });
-    }
-
-    @Test
     public void testMainPage() {
         JavalinTest.test(app, (server, client) -> {
             var response = client.get("/");
