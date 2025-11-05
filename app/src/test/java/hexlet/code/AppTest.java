@@ -46,8 +46,6 @@ public class AppTest {
     @BeforeEach
     public final void setUp() throws IOException, SQLException {
         app = App.getApp();
-        UrlRepository.removeAll();
-        UrlCheckRepository.removeAll();
         mockWebServer = new MockWebServer();
         MockResponse mockedResponse = new MockResponse()
                 .setBody(readFixture("index.html"));
@@ -57,6 +55,8 @@ public class AppTest {
 
     @AfterEach
     public final void tearDown() throws Exception {
+        UrlRepository.removeAll();
+        UrlCheckRepository.removeAll();
         mockWebServer.shutdown();
     }
 
