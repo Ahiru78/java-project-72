@@ -26,7 +26,6 @@ import okhttp3.mockwebserver.MockResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.postgresql.util.PSQLException;
 
 @Slf4j
 public class AppTest {
@@ -177,7 +176,7 @@ public class AppTest {
     }
 
     @Test
-    void testUrlRepoFindById() throws PSQLException {
+    public void testUrlRepoFindById() throws Exception {
         JavalinTest.test(app, (server, client) -> {
             Url url = new Url("https://ya.ru");
             UrlRepository.save(url);
@@ -187,7 +186,7 @@ public class AppTest {
         });
     }
     @Test
-    void testUrlRepoGetEntities() throws PSQLException {
+    public void testUrlRepoGetEntities() throws Exception {
         JavalinTest.test(app, (server, client) -> {
             Url url1 = new Url("https://ya.ru");
             Url url2 = new Url("https://www.reddit.com/");
@@ -199,7 +198,7 @@ public class AppTest {
     }
 
     @Test
-    void testUrlRepoRemoveAll() throws PSQLException {
+    public void testUrlRepoRemoveAll() throws Exception {
         JavalinTest.test(app, (server, client) -> {
             Url url1 = new Url("https://ya.ru");
             Url url2 = new Url("https://www.reddit.com/");
