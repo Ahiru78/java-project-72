@@ -79,20 +79,22 @@ public class AppTest {
     @Test
     public void testPostMockUrl() {
         JavalinTest.test(app, (server, client) -> {
-            Response response = client.post(NamedRoutes.urlsPath(), "url=http://localhost:56678");
-            Optional<Url> url = UrlRepository.findByName("http://localhost:56678");
+            var mockUrl = "http://localhost:" + mockWebServer.getPort();
+            Response response = client.post(NamedRoutes.urlsPath(), "url=" + mockUrl);
+            Optional<Url> url = UrlRepository.findByName(mockUrl);
             var urlId = url.get().getId().toString();
             var getResponse = client.get(NamedRoutes.urlPath(urlId));
             assertThat(getResponse.code()).isEqualTo(200);
-            assertThat(getResponse.body().string()).contains("http://localhost:56678");
+            assertThat(getResponse.body().string()).contains(mockUrl);
         });
     }
 
     @Test
     public void testPostMockUrlCheck() {
         JavalinTest.test(app, (server, client) -> {
-            Response response = client.post(NamedRoutes.urlsPath(), "url=http://localhost:56678");
-            Optional<Url> url = UrlRepository.findByName("http://localhost:56678");
+            var mockUrl = "http://localhost:" + mockWebServer.getPort();
+            Response response = client.post(NamedRoutes.urlsPath(),  "url=" + mockUrl);
+            Optional<Url> url = UrlRepository.findByName(mockUrl);
             Long urlId = url.get().getId();
             Response responseCheck = client.post(NamedRoutes.urlChecksPath(urlId));
             var getResponse = client.get(NamedRoutes.urlPath(urlId));
