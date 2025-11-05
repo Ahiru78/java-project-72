@@ -61,35 +61,6 @@ public class AppTest {
     }
 
     @Test
-    public void testMainPage() {
-        JavalinTest.test(app, (server, client) -> {
-            var response = client.get("/");
-            assertThat(response.code()).isEqualTo(200);
-        });
-    }
-
-    @Test
-    public void testUrlsPage() {
-        JavalinTest.test(app, (server, client) -> {
-            var response = client.get("/urls");
-            assertThat(response.code()).isEqualTo(200);
-        });
-    }
-
-    @Test
-    public void testPostMockUrl() {
-        JavalinTest.test(app, (server, client) -> {
-            var mockUrl = "http://localhost:" + mockWebServer.getPort();
-            Response response = client.post(NamedRoutes.urlsPath(), "url=" + mockUrl);
-            Optional<Url> url = UrlRepository.findByName(mockUrl);
-            var urlId = url.get().getId().toString();
-            var getResponse = client.get(NamedRoutes.urlPath(urlId));
-            assertThat(getResponse.code()).isEqualTo(200);
-            assertThat(getResponse.body().string()).contains(mockUrl);
-        });
-    }
-
-    @Test
     public void testPostMockUrlCheck() {
         JavalinTest.test(app, (server, client) -> {
             var mockUrl = "http://localhost:" + mockWebServer.getPort();
@@ -117,6 +88,35 @@ public class AppTest {
             var getResponse = client.get(NamedRoutes.urlPath(urlId));
             assertThat(getResponse.code()).isEqualTo(200);
             assertThat(getResponse.body().string()).contains("https://reddit.com");
+        });
+    }
+
+    @Test
+    public void testMainPage() {
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.get("/");
+            assertThat(response.code()).isEqualTo(200);
+        });
+    }
+
+    @Test
+    public void testUrlsPage() {
+        JavalinTest.test(app, (server, client) -> {
+            var response = client.get("/urls");
+            assertThat(response.code()).isEqualTo(200);
+        });
+    }
+
+    @Test
+    public void testPostMockUrl() {
+        JavalinTest.test(app, (server, client) -> {
+            var mockUrl = "http://localhost:" + mockWebServer.getPort();
+            Response response = client.post(NamedRoutes.urlsPath(), "url=" + mockUrl);
+            Optional<Url> url = UrlRepository.findByName(mockUrl);
+            var urlId = url.get().getId().toString();
+            var getResponse = client.get(NamedRoutes.urlPath(urlId));
+            assertThat(getResponse.code()).isEqualTo(200);
+            assertThat(getResponse.body().string()).contains(mockUrl);
         });
     }
 
@@ -176,7 +176,7 @@ public class AppTest {
     }
 
     @Test
-    public void testUrlRepoFindById() throws Exception {
+    void testUrlRepoFindById() throws Exception {
         JavalinTest.test(app, (server, client) -> {
             Url url = new Url("https://ya.ru");
             UrlRepository.save(url);
@@ -186,7 +186,7 @@ public class AppTest {
         });
     }
     @Test
-    public void testUrlRepoGetEntities() throws Exception {
+    void testUrlRepoGetEntities() throws Exception {
         JavalinTest.test(app, (server, client) -> {
             Url url1 = new Url("https://ya.ru");
             Url url2 = new Url("https://www.reddit.com/");
@@ -198,7 +198,7 @@ public class AppTest {
     }
 
     @Test
-    public void testUrlRepoRemoveAll() throws Exception {
+    void testUrlRepoRemoveAll() throws Exception {
         JavalinTest.test(app, (server, client) -> {
             Url url1 = new Url("https://ya.ru");
             Url url2 = new Url("https://www.reddit.com/");
