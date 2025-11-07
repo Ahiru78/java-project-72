@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 public class UrlCheckRepository extends BaseRepository {
@@ -65,9 +64,8 @@ public class UrlCheckRepository extends BaseRepository {
         return  checksList;
     }
 
-    public static Optional<Map<Long, UrlCheck>> findLatest() throws SQLException {
+    public static Map<Long, UrlCheck> findLatest() throws SQLException {
         var sql = "SELECT DISTINCT ON (url_id) * from url_checks order by url_id DESC, id DESC";
-        UrlCheck urlCheck = null;
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             var resultSet = stmt.executeQuery();
@@ -84,7 +82,7 @@ public class UrlCheckRepository extends BaseRepository {
                 check.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                 result.put(urlId, check);
             }
-            return Optional.ofNullable(result);
+            return result;
         }
     }
 

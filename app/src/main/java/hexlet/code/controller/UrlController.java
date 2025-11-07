@@ -18,8 +18,6 @@ import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 import static io.javalin.rendering.template.TemplateUtil.model;
 
 @Slf4j
@@ -69,10 +67,10 @@ public class UrlController {
 
     public static void index(Context ctx) throws SQLException {
         var urls = UrlRepository.getEntities();
-        Optional<Map<Long, UrlCheck>> urlChecks = UrlCheckRepository.findLatest();
+        Map<Long, UrlCheck> urlChecks = UrlCheckRepository.findLatest();
         for (Url url : urls) {
-            if (urlChecks.isPresent() & urlChecks.get().containsKey(url.getId())) {
-                url.setLastCheck(urlChecks.get().get(url.getId()));
+            if (!urlChecks.isEmpty() & urlChecks.containsKey(url.getId())) {
+                url.setLastCheck(urlChecks.get(url.getId()));
             }
         }
         var page = new UrlsPage(urls);
